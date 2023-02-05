@@ -99,6 +99,15 @@ impl<T: GenerateRandom, const N: usize> GenerateRandom for [T; N] {
     }
 }
 
+impl GenerateRandom for String {
+    fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+        use rand::distributions::{Alphanumeric, DistString};
+
+        let len = rng.gen_range(0..32);
+        Alphanumeric.sample_string(rng, len)
+    }
+}
+
 macro_rules! impl_generate_random_tuple {
 	( $t0:ident $( $t:ident )* ) => {
 		impl< $t0, $( $t, )* > GenerateRandom for ( $t0, $( $t, )* )
