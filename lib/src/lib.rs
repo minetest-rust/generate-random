@@ -115,6 +115,19 @@ impl<T: GenerateRandom> GenerateRandom for Vec<T> {
     }
 }
 
+impl<K, V> GenerateRandom for std::collections::HashMap<K, V>
+where
+    K: GenerateRandom + std::cmp::Eq + std::hash::Hash,
+    V: GenerateRandom,
+{
+    fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+        let len = rng.gen_range(0..8);
+        (0..len)
+            .map(|_| (K::generate_random(rng), V::generate_random(rng)))
+            .collect()
+    }
+}
+
 macro_rules! impl_generate_random_tuple {
 	( $t0:ident $( $t:ident )* ) => {
 		impl< $t0, $( $t, )* > GenerateRandom for ( $t0, $( $t, )* )
