@@ -128,6 +128,12 @@ where
     }
 }
 
+impl<T: GenerateRandom> GenerateRandom for Box<T> {
+    fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+        Box::new(T::generate_random(rng))
+    }
+}
+
 #[cfg(feature = "enumset")]
 impl<T: enumset::EnumSetType + GenerateRandom> GenerateRandom for enumset::EnumSet<T> {
     fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
