@@ -128,6 +128,16 @@ where
     }
 }
 
+#[cfg(feature = "enumset")]
+impl<T: enumset::EnumSetType + GenerateRandom> GenerateRandom for enumset::EnumSet<T> {
+    fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+        let max = enumset::EnumSet::<T>::variant_count() * 2;
+        let len = rng.gen_range(0..max);
+
+        (0..len).map(|_| T::generate_random(rng)).collect()
+    }
+}
+
 macro_rules! impl_generate_random_tuple {
 	( $t0:ident $( $t:ident )* ) => {
 		impl< $t0, $( $t, )* > GenerateRandom for ( $t0, $( $t, )* )
