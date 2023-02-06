@@ -27,9 +27,13 @@ mod tests {
 
     #[derive(GenerateRandom, PartialEq, Eq, Debug)]
     enum TestEnumNamed {
-        Left { x: u8 },
+        Left {
+            x: u8,
+        },
         #[weight(2)]
-        Right { y: bool },
+        Right {
+            y: bool,
+        },
     }
 
     #[derive(GenerateRandom, PartialEq, Eq, Debug)]
@@ -48,10 +52,7 @@ mod tests {
     fn test_enum_unit() {
         let mut rng = rng();
         assert_eq!(
-            repeat(
-                6,
-                || TestEnumUnit::generate_random(&mut rng),
-            ),
+            repeat(6, || TestEnumUnit::generate_random(&mut rng),),
             vec![
                 TestEnumUnit::Right,
                 TestEnumUnit::Right,
@@ -59,17 +60,15 @@ mod tests {
                 TestEnumUnit::Right,
                 TestEnumUnit::Right,
                 TestEnumUnit::Right,
-            ]);
+            ]
+        );
     }
 
     #[test]
     fn test_enum_unnamed() {
         let mut rng = rng();
         assert_eq!(
-            repeat(
-                6,
-                || TestEnumUnnamed::generate_random(&mut rng),
-            ),
+            repeat(6, || TestEnumUnnamed::generate_random(&mut rng),),
             vec![
                 TestEnumUnnamed::Right(false),
                 TestEnumUnnamed::Left(142),
@@ -77,17 +76,15 @@ mod tests {
                 TestEnumUnnamed::Right(true),
                 TestEnumUnnamed::Right(false),
                 TestEnumUnnamed::Left(19),
-            ]);
+            ]
+        );
     }
 
     #[test]
     fn test_enum_named() {
         let mut rng = rng();
         assert_eq!(
-            repeat(
-                6,
-                || TestEnumNamed::generate_random(&mut rng),
-            ),
+            repeat(6, || TestEnumNamed::generate_random(&mut rng),),
             vec![
                 TestEnumNamed::Right { y: false },
                 TestEnumNamed::Left { x: 142 },
@@ -95,16 +92,14 @@ mod tests {
                 TestEnumNamed::Right { y: true },
                 TestEnumNamed::Right { y: false },
                 TestEnumNamed::Left { x: 19 },
-            ]);
+            ]
+        );
     }
 
     #[test]
     fn test_struct_unit() {
         let mut rng = rng();
-        assert_eq!(
-            TestStructUnit::generate_random(&mut rng),
-            TestStructUnit
-        );
+        assert_eq!(TestStructUnit::generate_random(&mut rng), TestStructUnit);
     }
 
     #[test]

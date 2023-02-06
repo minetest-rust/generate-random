@@ -2,10 +2,10 @@
 //! that implements the trait of the same name from the `generate-random` crate.
 //! Refer to the documentation of that crate for more information.
 
-use syn::{DeriveInput, Data, Fields};
+use syn::{Data, DeriveInput, Fields};
 
-mod handle_struct;
 mod handle_enum;
+mod handle_struct;
 
 #[proc_macro_derive(GenerateRandom, attributes(weight))]
 pub fn derive_generate_random(input: proc_macro::TokenStream) -> proc_macro::TokenStream {
@@ -14,14 +14,17 @@ pub fn derive_generate_random(input: proc_macro::TokenStream) -> proc_macro::Tok
         Data::Struct(ty) => handle_struct::generate(&input.ident, ty),
         Data::Enum(ty) => handle_enum::generate(&input.ident, ty),
         Data::Union(_) => panic!("Unions are not supported"),
-    }.into()
+    }
+    .into()
 }
 
 fn generate_fields(fields: Fields) -> proc_macro2::TokenStream {
     use quote::quote;
     match fields {
         Fields::Named(fields) => {
-            let fields = fields.named.into_iter()
+            let fields = fields
+                .named
+                .into_iter()
                 .map(|field| {
                     let field = field.ident.unwrap();
                     quote! {
@@ -32,7 +35,9 @@ fn generate_fields(fields: Fields) -> proc_macro2::TokenStream {
             quote! { { #fields } }
         }
         Fields::Unnamed(fields) => {
-            let fields = fields.unnamed.into_iter()
+            let fields = fields
+                .unnamed
+                .into_iter()
                 .map(|_field| {
                     quote! {
                         generate_random::GenerateRandom::generate_random(rng),

@@ -1,7 +1,7 @@
+use super::generate_fields;
 use proc_macro2::{Ident, TokenStream};
 use quote::quote;
 use syn::DataStruct;
-use super::generate_fields;
 
 pub fn generate(name: &Ident, ty: DataStruct) -> TokenStream {
     let fields = generate_fields(ty.fields);

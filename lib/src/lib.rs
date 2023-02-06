@@ -42,15 +42,15 @@ pub trait GenerateRandom {
 }
 
 macro_rules! impl_generate_random {
-    ( $( $t:ty, )+ ) => {
-        $(
-            impl GenerateRandom for $t {
-                fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
-                    rng.gen()
-                }
-            }
-        )+
-    }
+	( $( $t:ty, )+ ) => {
+		$(
+			impl GenerateRandom for $t {
+				fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+					rng.gen()
+				}
+			}
+		)+
+	}
 }
 
 impl_generate_random! {
@@ -83,32 +83,32 @@ impl<T: GenerateRandom> GenerateRandom for Option<T> {
 }
 
 macro_rules! impl_generate_random_tuple {
-    ( $t0:ident $( $t:ident )* ) => {
-        impl< $t0, $( $t, )* > GenerateRandom for ( $t0, $( $t, )* )
-        where
-            $t0: GenerateRandom,
-            $(
-                $t: GenerateRandom,
-            )*
-        {
-            fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
-                (
-                    $t0::generate_random(rng),
-                    $(
-                        $t::generate_random(rng),
-                    )*
-                )
-            }
-        }
-        impl_generate_random_tuple!( $( $t )* );
-    };
-    () => {
-        impl GenerateRandom for () {
-            fn generate_random<R: rand::Rng + ?Sized>(_rng: &mut R) -> Self {
-                ()
-            }
-        }
-    }
+	( $t0:ident $( $t:ident )* ) => {
+		impl< $t0, $( $t, )* > GenerateRandom for ( $t0, $( $t, )* )
+		where
+			$t0: GenerateRandom,
+			$(
+				$t: GenerateRandom,
+			)*
+		{
+			fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+				(
+					$t0::generate_random(rng),
+					$(
+						$t::generate_random(rng),
+					)*
+				)
+			}
+		}
+		impl_generate_random_tuple!( $( $t )* );
+	};
+	() => {
+		impl GenerateRandom for () {
+			fn generate_random<R: rand::Rng + ?Sized>(_rng: &mut R) -> Self {
+				()
+			}
+		}
+	}
 }
 
 impl_generate_random_tuple!(A B C D E F G H I J K L);

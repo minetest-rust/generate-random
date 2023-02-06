@@ -1,19 +1,23 @@
+use super::generate_fields;
 use proc_macro2::{Ident, Literal, TokenStream};
 use quote::quote;
 use syn::{DataEnum, Variant};
-use super::generate_fields;
 
 fn variant_weight(variant: &Variant) -> Literal {
     for attr in variant.attrs.iter() {
         if attr.path.is_ident("weight") {
-            return attr.parse_args::<Literal>().expect("expected literal for `#[weight(...)]`")
+            return attr
+                .parse_args::<Literal>()
+                .expect("expected literal for `#[weight(...)]`");
         }
     }
     Literal::u64_suffixed(1)
 }
 
 pub fn generate(name: &Ident, ty: DataEnum) -> TokenStream {
-    let mut variant_weights = ty.variants.into_iter()
+    let mut variant_weights = ty
+        .variants
+        .into_iter()
         .map(|variant| (variant_weight(&variant), variant));
 
     let mut arms = TokenStream::new();
