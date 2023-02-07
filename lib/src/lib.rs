@@ -84,18 +84,7 @@ impl<T: GenerateRandom> GenerateRandom for Option<T> {
 
 impl<T: GenerateRandom, const N: usize> GenerateRandom for [T; N] {
     fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
-        use core::mem::MaybeUninit;
-
-        let mut arr: [MaybeUninit<T>; N] = unsafe { MaybeUninit::uninit().assume_init() };
-
-        for elem in arr.iter_mut() {
-            *elem = MaybeUninit::new(T::generate_random(rng));
-        }
-
-        let ret = unsafe { std::mem::transmute_copy(&arr) };
-        std::mem::forget(arr);
-
-        ret
+        core::array::from_fn(|_| T::generate_random(rng))
     }
 }
 
