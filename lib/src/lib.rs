@@ -104,6 +104,16 @@ impl<T: GenerateRandom> GenerateRandom for Vec<T> {
     }
 }
 
+impl<T> GenerateRandom for std::collections::HashSet<T>
+where
+    T: GenerateRandom + std::cmp::Eq + std::hash::Hash,
+{
+    fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+        let len = rng.gen_range(0..8);
+        (0..len).map(|_| T::generate_random(rng)).collect()
+    }
+}
+
 impl<K, V> GenerateRandom for std::collections::HashMap<K, V>
 where
     K: GenerateRandom + std::cmp::Eq + std::hash::Hash,
