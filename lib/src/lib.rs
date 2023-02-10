@@ -41,6 +41,22 @@ pub trait GenerateRandom {
     fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self;
 }
 
+/// Enable randomly generating values of an enum
+/// with a predefined variant
+///
+/// This trait is automatically implemented for enums
+/// by the [`macro@GenerateRandom`] macro
+pub trait GenerateRandomVariant {
+    /// Return number of variants
+    fn num_variants() -> usize;
+
+    /// Return name of variant with index
+    fn variant_name(variant: usize) -> &'static str;
+
+    /// Create a randomly generated value with a predefied variant
+    fn generate_random_variant<R: rand::Rng + ?Sized>(rng: &mut R, variant: usize) -> Self;
+}
+
 macro_rules! impl_generate_random {
 	( $( $t:ty, )+ ) => {
 		$(
