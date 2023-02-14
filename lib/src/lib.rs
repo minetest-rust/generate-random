@@ -215,6 +215,7 @@ macro_rules! impl_generate_random_tuple {
 		impl_generate_random_tuple!( $( $t )* );
 	};
 	() => {
+		#[allow(clippy::unused_unit)]
 		impl GenerateRandom for () {
 			fn generate_random<R: rand::Rng + ?Sized>(_rng: &mut R) -> Self {
 				()
