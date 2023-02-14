@@ -149,6 +149,41 @@ impl<T: GenerateRandom> GenerateRandom for Box<T> {
     }
 }
 
+impl<T: GenerateRandom> GenerateRandom for std::ops::Range<T> {
+    fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+        T::generate_random(rng)..T::generate_random(rng)
+    }
+}
+
+impl<T: GenerateRandom> GenerateRandom for std::ops::RangeFrom<T> {
+    fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+        T::generate_random(rng)..
+    }
+}
+
+impl GenerateRandom for std::ops::RangeFull {
+    fn generate_random<R: rand::Rng + ?Sized>(_rng: &mut R) -> Self {
+        ..
+    }
+}
+
+impl<T: GenerateRandom> GenerateRandom for std::ops::RangeInclusive<T> {
+    fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+        T::generate_random(rng)..=T::generate_random(rng)
+    }
+}
+
+impl<T: GenerateRandom> GenerateRandom for std::ops::RangeTo<T> {
+    fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+        ..T::generate_random(rng)
+    }
+}
+impl<T: GenerateRandom> GenerateRandom for std::ops::RangeToInclusive<T> {
+    fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+        ..=T::generate_random(rng)
+    }
+}
+
 #[cfg(feature = "enumset")]
 impl<T: enumset::EnumSetType + GenerateRandom> GenerateRandom for enumset::EnumSet<T> {
     fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
