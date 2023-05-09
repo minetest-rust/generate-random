@@ -226,6 +226,79 @@ macro_rules! impl_generate_random_tuple {
 
 impl_generate_random_tuple!(A B C D E F G H I J K L);
 
+#[cfg(feature = "cgmath")]
+mod impl_cgmath {
+    use super::*;
+    use cgmath::*;
+
+    macro_rules! impl_from {
+		($ident:ident, $from:ty, $bound:ident $(+ $others:ident )*) => {
+			impl<T: $bound $(+ $others)* + GenerateRandom> GenerateRandom for $ident<T> {
+				fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+					<$from>::generate_random(rng).into()
+				}
+			}
+		};
+	}
+
+    macro_rules! impl_wrap {
+        ($ident:ident) => {
+            impl<T: GenerateRandom> GenerateRandom for $ident<T> {
+                fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+                    Self(GenerateRandom::generate_random(rng))
+                }
+            }
+        };
+    }
+
+    impl_from!(Vector1, [T; 1], Clone);
+    impl_from!(Vector2, [T; 2], Clone);
+    impl_from!(Vector3, [T; 3], Clone);
+    impl_from!(Vector4, [T; 4], Clone);
+
+    impl_from!(Point1, [T; 1], Clone);
+    impl_from!(Point2, [T; 2], Clone);
+    impl_from!(Point3, [T; 3], Clone);
+
+    impl_from!(Matrix2, [[T; 2]; 2], Copy);
+    impl_from!(Matrix3, [[T; 3]; 3], Copy);
+    impl_from!(Matrix4, [[T; 4]; 4], Copy);
+
+    impl_wrap!(Deg);
+    impl_wrap!(Rad);
+
+    impl<A: GenerateRandom> GenerateRandom for Euler<A> {
+        fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+            let x = GenerateRandom::generate_random(rng);
+            let y = GenerateRandom::generate_random(rng);
+            let z = GenerateRandom::generate_random(rng);
+            Self::new(x, y, z)
+        }
+    }
+}
+
+#[cfg(feature = "collision")]
+mod impl_collision {
+    use super::*;
+    use cgmath::*;
+    use collision::*;
+
+    macro_rules! impl_abbb {
+        ($ident:ident) => {
+            impl<S: GenerateRandom + BaseNum> GenerateRandom for $ident<S> {
+                fn generate_random<R: rand::Rng + ?Sized>(rng: &mut R) -> Self {
+                    let p1 = GenerateRandom::generate_random(rng);
+                    let p2 = GenerateRandom::generate_random(rng);
+                    Self::new(p1, p2)
+                }
+            }
+        };
+    }
+
+    impl_abbb!(Aabb2);
+    impl_abbb!(Aabb3);
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
